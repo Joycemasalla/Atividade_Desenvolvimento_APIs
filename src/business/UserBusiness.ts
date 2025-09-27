@@ -54,7 +54,9 @@ export class UserBusiness {
 
             const emailExiste = users.some(user => user.email === newUser.email);
             if (emailExiste) {
-                erros.push("Já existe um usuário com este e-mail.")
+                const erro = new Error("Já existe um usuário com este e-mail.");
+                (erro as any).status = 409; //409 - Conflito (email duplicado)
+                throw erro;
             }
 
             if (erros.length > 0) {
