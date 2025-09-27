@@ -9,15 +9,15 @@ export class PostBussiness {
     postData = new PostData();
     userBusiness = new UserBusiness();
 
-    buscarTodosPosts = ()=>{
-        try{
+    buscarTodosPosts = () => {
+        try {
             const todosPosts = this.postData.buscarTodosPosts();
             return todosPosts;
-        }catch(error: any){
+        } catch (error: any) {
             throw new Error(error.message);
         }
     }
-    
+
 
     //EXERCICIO 3 - POST COM VALIDAÇÕES 
     criarPost = (title: string, content: string, authorId: number) => {
@@ -71,7 +71,7 @@ export class PostBussiness {
             //  Validar se o ID do post existe
             const postIndex = this.postData.buscarIndicePorId(id);
             if (postIndex === -1) {
-                erros.push("Post não encontrado.");
+                throw new Error("Post não encontrado.");
             }
 
             //  Obter o post atual para a atualização
@@ -95,6 +95,15 @@ export class PostBussiness {
                 // Se o status de publicação foi enviado, atuliza
                 postAtualizado.published = novosDados.published;
             }
+
+            if (postAtualizado.title && postAtualizado.title.length < 3) {
+                erros.push("O título deve ter no mínimo 3 caracteres.");
+            }
+            if (postAtualizado.content && postAtualizado.content.length < 10) {
+                erros.push("O conteúdo deve ter no mínimo 10 caracteres.");
+            }
+
+
             if (erros.length > 0) {
                 // Junta as mensagens de erro usando ponto e vírgula e espaço
                 const mensagemDetalhada = erros.join('\n- ');
