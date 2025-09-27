@@ -84,17 +84,15 @@ export class UserBusiness {
         try {
 
             if (!id || id <= 0) {
-                throw new Error("ID faltando.");
+                return undefined; // Retorna undefined para ID inválido
             }
             const user = this.userData.buscarUsuarioPorId(id); // aqui ta buscando no banco o usuario pelo id
-            if (!user) {
-                throw new Error("Usuario não encontrado."); // se n achar, da erro
-            }
-
-            return user; // se achar, retorna o usuario
+            //Retorna undefined se não encontrar. Não lança erro de "não encontrado".
+            return user;
 
         } catch (error: any) {
-            throw  new Error (error); // se der algum erro, retorna o erro
+            // Se houver erro de Data, lança um erro genérico 500, ou retorna undefined/null
+            return undefined;
         }
 
     }

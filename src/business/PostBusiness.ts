@@ -24,7 +24,7 @@ export class PostBussiness {
                 erros.push("O conteúdo deve ter no mínimo 10 caracteres.");
             }
             const userBusiness = new UserBusiness();
-            const author = userBusiness.buscarUsuarioPorId(authorId);
+            const author = this.userBusiness.buscarUsuarioPorId(authorId);
             if (!author) {
                 erros.push("Autor não encontrado.");
             }
@@ -109,7 +109,7 @@ export class PostBussiness {
             // 1. Validar se o ID do post existe
             const postIndex = this.postData.buscarIndicePorId(postId);
             if (postIndex === -1) {
-                erros.push("Post não encontrado.");
+                throw new Error("Post não encontrado.");
             }
 
             const postPraDeletar = posts[postIndex];
@@ -117,10 +117,15 @@ export class PostBussiness {
             // 2. Verificar se o userId corresponde ao authorId do post
 
             const user = this.userBusiness.buscarUsuarioPorId(userId);
+            //  checar se o usuário existe ANTES de acessar a role.
+            const isAdmin = user && user.role === "admin";
+            const isAuthor = postPraDeletar.authorId === userId;
 
-            if (postPraDeletar.authorId !== userId && user.role !== "admin") {
+            // Apenas autor OU admin podem remover.
+            if (!isAuthor && !isAdmin) {
                 erros.push("Apenas o autor do post ou um admin podem deletar este post.");
             }
+
             if (erros.length > 0) {
                 // Junta as mensagens de erro usando ponto e vírgula e espaço
                 const mensagemDetalhada = erros.join('\n- ');

@@ -78,6 +78,15 @@ export class UserController {
                 return res.status(400).send(response);
             }
             const user = this.userBusiness.buscarUsuarioPorId(idUser); // aqui ta enviando pro bussiness validar a regra de negócio
+
+            if (!user) {//Se for undefined (não encontrado)
+                const response: ApiResponse = {
+                    success: false,
+                    message: "Usuário não encontrado"
+                };
+                return res.status(404).send(response);
+            }
+
             const response: ApiResponse = {
                 success: true,
                 message: "Usuário encontrado com sucesso.",
@@ -139,6 +148,8 @@ export class UserController {
             };
             if (error.message.includes("não encontrado")) {
                 res.status(404).send(response);
+            } else if (error.message.includes("e-mail") || error.message.includes("Já existe um usuário")) { // CHECAGEM PARA 409
+                res.status(409).send(response);
             } else {
                 res.status(400).send(response);
             }
