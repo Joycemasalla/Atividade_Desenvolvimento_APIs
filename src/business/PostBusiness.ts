@@ -9,6 +9,16 @@ export class PostBussiness {
     postData = new PostData();
     userBusiness = new UserBusiness();
 
+    buscarTodosPosts = ()=>{
+        try{
+            const todosPosts = this.postData.buscarTodosPosts();
+            return todosPosts;
+        }catch(error: any){
+            throw new Error(error.message);
+        }
+    }
+    
+
     //EXERCICIO 3 - POST COM VALIDAÇÕES 
     criarPost = (title: string, content: string, authorId: number) => {
         try {

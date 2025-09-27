@@ -7,6 +7,24 @@ import { ApiResponse } from '../types';
 export class PostController {
     postBussiness = new PostBussiness();
 
+    buscarTodosPosts = async(req: Request, res: Response)=>{
+        const todosPosts = this.postBussiness.buscarTodosPosts();
+        try{
+            const response: ApiResponse = {
+                success: true,
+                message: "Posts encontrados",
+                data: todosPosts
+            }
+            return res.status(200).send(response);
+        }catch(error: any){
+            const response: ApiResponse = {
+                success: false,
+                message: error.message
+            }
+            return res.status(500).send(response);
+        }
+    }
+
     //EXERCICIO 3 - POST COM VALIDAÇÕES 
     criarPost = async (req: Request, res: Response) => {
         try {
@@ -32,7 +50,18 @@ export class PostController {
         try {
             const id = Number(req.params.id);
             const { title, content, published } = req.body;
+            const body = req.body; // Mantemos o corpo original para checagem simples
 
+           // camposProibidos id,authorId,createdAt
+            if (body.id !== undefined || body.authorId !== undefined || body.createdAt !== undefined) {
+                const response: ApiResponse = {
+                    success: false,
+                    message: "Não é permitido atualizar os campos 'id', 'authorId' ou 'createdAt'."
+                };
+                // Retorna 400 Bad Request se algum campo proibido foi enviado
+                return res.status(400).send(response);
+            }
+            
             const novosDados: any = {};
             //se nao tiver passado esses dados, fica com o que ja estava
             if (title !== undefined) novosDados.title = title;

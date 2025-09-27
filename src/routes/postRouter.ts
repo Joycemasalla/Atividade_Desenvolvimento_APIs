@@ -5,6 +5,9 @@ export const postRouter = express.Router();
 
 const postController = new PostController();
 
+//Buscar todos os posts
+postRouter.get('/', postController.buscarTodosPosts);
+
 //EXERCICIOS 3 -  Rota para criar um novo post
 postRouter.post('/', postController.criarPost);
 

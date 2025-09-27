@@ -6,6 +6,8 @@ import { Post } from "../types";
 
 export class PostData {
 
+
+
     //EXERCICIO 3 - POST COM VALIDAÇÕES
     criarPost = (novoPost: Post) => {
         try {
@@ -36,16 +38,20 @@ export class PostData {
     }
 
     // EXERCICIO 6 - DELETE - deletar post - metodo para deletar o post no "banco de dados" 
-    deletarPost = (index: number) =>{
-        try{
+    deletarPost = (index: number) => {
+        try {
             posts.splice(index, 1);
-        }catch(error: any){
+        } catch (error: any) {
             throw new Error(error.sqlMessage || error.message);
         }
     }
 
     // EXERCICIO 7 - GET TODOS OS POSTS - metodo para pegar todos os posts no "banco de dados" pra depois ver se o usuario tem posts ou n
-    buscarTodosPosts =()=>{
-        return posts;
+    buscarTodosPosts = () => {
+        try {
+            return posts;
+        } catch (error: any) {
+            throw new Error(error.sqlMessage || error.message);
+        }
     }
 }
