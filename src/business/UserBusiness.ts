@@ -36,21 +36,33 @@ export class UserBusiness {
 
     criarusuario = (newUser: User) => {
         try {
+            //criar a lista para armazenar os erros
+            const erros: string[] = [];
+
+
             // Limpar dados antes da validação
             newUser.name = newUser.name?.trim();
             newUser.email = newUser.email?.trim().toLowerCase();
 
             if (!newUser.name || !newUser.email || !newUser.role || !newUser.age || !newUser.senha) {
-                throw new Error("Campos faltantes")
+                erros.push("Campos faltantes");
             }
 
             if (newUser.role !== "user" && newUser.role !== "admin") {
-                throw new Error("O campo 'role' deve ser 'user' ou 'admin'")
+                erros.push("O campo 'role' deve ser 'user' ou 'admin'")
             }
 
             const emailExiste = users.some(user => user.email === newUser.email);
             if (emailExiste) {
-                throw new Error("Já existe um usuário com este e-mail.")
+                erros.push("Já existe um usuário com este e-mail.")
+            }
+
+            if (erros.length > 0) {
+                // Junta as mensagens de erro usando ponto e vírgula e espaço
+                const mensagemDetalhada = erros.join('\n- ');
+                const mensagemErros = new Error(`Erros de Validação:\n- ${mensagemDetalhada}`);
+                (mensagemErros as any).status = 400;
+                throw mensagemErros;
             }
 
             const novoId = getNextUserId();
@@ -62,14 +74,15 @@ export class UserBusiness {
             this.userData.criarUsuario(userComId);
 
             return userComId;
-        } catch (error: any) {
-            throw new Error(error.message);
+        } catch (mensagemErros: any) {
+            throw mensagemErros;
         }
     }
 
     //EXERCICIO 1 - BUSCAR USUARIO POR ID - Aqui ta validando a regra de negócio antes de ir pro data buscar no banco de dados
     buscarUsuarioPorId = (id: number) => {
         try {
+
             if (!id || id <= 0) {
                 throw new Error("ID faltando.");
             }
@@ -77,54 +90,70 @@ export class UserBusiness {
             if (!user) {
                 throw new Error("Usuario não encontrado."); // se n achar, da erro
             }
+
             return user; // se achar, retorna o usuario
+
         } catch (error: any) {
-            throw new Error(error.message); // se der algum erro, retorna o erro
+            throw  new Error (error); // se der algum erro, retorna o erro
         }
 
     }
 
 
-    // Linha ~83 - Não retornar erro para array vazio
     getUsersByAgeRange = (minAge: number, maxAge: number) => {
         try {
+            const erros: string[] = [];
             if (isNaN(minAge) || isNaN(maxAge)) {
-                throw new Error("Parâmetros inválidos. Devem ser números.");
+                erros.push("Parâmetros inválidos. Devem ser números.");
             }
             if (minAge < 0 || maxAge < 0) {
-                throw new Error("Idade não pode ser negativa.");
+                erros.push("Idade não pode ser negativa.");
             }
             if (minAge > maxAge) {
-                throw new Error("Idade mínima não pode ser maior que a máxima.");
+                erros.push("Idade mínima não pode ser maior que a máxima.");
             }
 
+            if (erros.length > 0) {
+                // Junta as mensagens de erro usando ponto e vírgula e espaço
+                const mensagemDetalhada = erros.join('\n- ');
+                const mensagemErros = new Error(`Erros de Validação:\n- ${mensagemDetalhada}`);
+                (mensagemErros as any).status = 400;
+                throw mensagemErros;
+            }
             const users = this.userData.buscarUsuariosPorFaixaEtaria(minAge, maxAge);
-            return users; // ✅ Retorna array vazio se não encontrar, não erro
-        } catch (erro: any) {
-            throw new Error(erro.message);
+            return users; //  Retorna array vazio se não encontrar, não erro
+        } catch (mensagemErros: any) {
+            throw mensagemErros;
         }
     }
 
     //EXERCICIO 4 - PUT - ATUALIZAR USUARIO COMPLETO
     atualizarUsuario = (id: number, name: string, email: string, role: string, age: number, senha: string) => {
         try {
+            const erros: string[] = [];
             if (!id || !name || !email || !role || !age || !senha) {
-                throw new Error("Campos faltantes");
+                erros.push("Campos faltantes");
             }
             if (role !== "user" && role !== "admin") {
-                throw new Error("O campo 'role' deve ser 'user' ou 'admin'");
+                erros.push("O campo 'role' deve ser 'user' ou 'admin'");
             }
 
             const userIndex = this.userData.buscarIndiceporid(id); // aqui ta buscando o indice do usuario no array pelo id
             if (userIndex === -1) {
-                throw new Error("Usuario não encontrado");
+                erros.push("Usuario não encontrado");
             }
 
             const emailExiste = users.some(user => user.email === email && user.id !== id);
             if (emailExiste) {
-                throw new Error("Já existe um usuário com este e-mail.");
+                erros.push("Já existe um usuário com este e-mail.");
             }
-
+            if (erros.length > 0) {
+                // Junta as mensagens de erro usando ponto e vírgula e espaço
+                const mensagemDetalhada = erros.join('\n- ');
+                const mensagemErros = new Error(`Erros de Validação:\n- ${mensagemDetalhada}`);
+                (mensagemErros as any).status = 400;
+                throw mensagemErros;
+            }
 
             const dadosAtualizados: User = {
                 id,
@@ -139,8 +168,8 @@ export class UserBusiness {
             return "Usuário atualizado com sucesso.";
 
 
-        } catch (error: any) {
-            throw new Error(error.message);
+        } catch (mensagemErros: any) {
+            throw mensagemErros;
         }
     }
 
@@ -174,8 +203,8 @@ export class UserBusiness {
             return usuariosParaDeletar;
 
 
-        } catch (error: any) {
-            throw new Error(error.message);
+        } catch (mensagemErros: any) {
+            throw mensagemErros;
         }
     }
 }

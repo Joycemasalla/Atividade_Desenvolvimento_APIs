@@ -5,6 +5,8 @@ import { Post } from "../types";
 
 
 export class PostData {
+
+    //EXERCICIO 3 - POST COM VALIDAÇÕES
     criarPost = (novoPost: Post) => {
         try {
             posts.push(novoPost);

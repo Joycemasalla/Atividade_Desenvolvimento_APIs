@@ -5,7 +5,7 @@ export const postRouter = express.Router();
 
 const postController = new PostController();
 
-// Rota para criar um novo post
+//EXERCICIOS 3 -  Rota para criar um novo post
 postRouter.post('/', postController.criarPost);
 
 //EXERCICIO 5 - PATCH EDITAR POST - aqui ta definindo o endpoint que vai receber a requisição para editar o post

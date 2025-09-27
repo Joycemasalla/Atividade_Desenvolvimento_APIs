@@ -120,6 +120,7 @@ export class UserController {
         }
     }
 
+    //EXERCICIO 4 - PUT ATUALIZAÇÃO COMPLETA
     atualizarUsuario = async (req: Request, res: Response) => {
         try {
             const id = Number(req.params.id);
